@@ -1,24 +1,16 @@
-body {
-  font-family: Arial;
-  background: #ffffff;
-  text-align: center;
-}
-
-#listaPedidos {
-  width: 90%;
-  max-width: 500px;
-  margin: auto;
-}
-
-.pedido {
-  background: #ffeff8;
-  padding: 15px;
-  border-radius: 12px;
-  margin: 10px 0;
-  text-align: left;
-  box-shadow: 0 0 8px #ccc;
-}
-
-h3 {
-  margin: 0;
-}
+:root{--bg:#f2f4f8;--card:#fff;--accent:#d1006b;--muted:#707070}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,Helvetica;background:var(--bg)}
+.panel-header{background:#fff;padding:18px 24px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:center}
+.panel-header h1{margin:0;color:var(--accent);font-size:26px}
+.orders-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;padding:18px}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center}
+.title{font-size:1.1rem;font-weight:700;color:#222}
+.small{font-size:0.95rem;color:var(--muted)}
+.list{margin:6px 0;padding-left:10px}
+.actions{display:flex;gap:8px;margin-top:8px}
+.btn{flex:1;padding:10px;border-radius:10px;border:0;font-size:14px;cursor:pointer}
+.btn.pending{background:#ffcf33}
+.btn.prep{background:#7bc8ff}
+.btn.ready{background:#7ee88b}
