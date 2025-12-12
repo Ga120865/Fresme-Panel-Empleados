@@ -1,5 +1,4 @@
-// panel.js
-import { db } from "../firebase.js";
+import { db } from "./firebase.js";
 import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
 const ordersEl = document.getElementById("orders");
@@ -58,7 +57,6 @@ function createCard(key, o){
   actions.appendChild(btnListo);
   actions.appendChild(btnEntreg);
 
-  // add to card
   card.appendChild(header);
   card.appendChild(cliente);
   card.appendChild(size);
@@ -68,7 +66,6 @@ function createCard(key, o){
   card.appendChild(status);
   card.appendChild(actions);
 
-  // highlight by status
   if(o.status === "Pendiente"){
     card.style.borderLeft = "6px solid #ffcf33";
   } else if(o.status === "Preparando"){
@@ -83,17 +80,13 @@ function createCard(key, o){
   return card;
 }
 
-/* Listen realtime */
 onValue(ref(db, "orders/"), snapshot => {
   ordersEl.innerHTML = "";
   const data = snapshot.val();
   if(!data) return;
 
-  // order by insertion (firebase auto keys are chronological)
   const entries = Object.entries(data);
-  // show newest first
   entries.reverse().forEach(([key, o]) => {
-    const card = createCard(key, o);
-    ordersEl.appendChild(card);
+    ordersEl.appendChild(createCard(key, o));
   });
 });
