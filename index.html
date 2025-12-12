@@ -1,19 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Pedidos</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fresme — Panel de Pedidos</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <h1>📦 Panel de Pedidos</h1>
+<header class="panel-header">
+  <h1>Panel de Pedidos</h1>
+</header>
 
-    <div id="ordersContainer" class="orders-container">
-        <p class="loading">Cargando pedidos...</p>
-    </div>
+<main>
+  <section id="orders" class="orders-grid"></section>
+</main>
 
-    <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
