@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGAfu9XB2EcVhV4kEv_xNOKI5YoLjZhr4",
@@ -17,93 +17,80 @@ const db = getDatabase(app);
 
 const ordersEl = document.getElementById("orders");
 
-// ------------------------------------------------
-// Tarjeta de pedido
-// ------------------------------------------------
 function createCard(key, o){
-  const card = document.createElement("div");
+  const card = document.createElement("article");
   card.className = "card";
 
   const header = document.createElement("div");
   header.className = "row";
   header.innerHTML = `
     <div class="title">Pedido #${key.slice(-6)}</div>
-    <div class="small">${new Date(o.timestamp).toLocaleTimeString()}</div>
+    <div class="small">${o.time || ""}</div>
   `;
-
-  const cliente = document.createElement("div");
-  cliente.className = "small";
-  cliente.innerHTML = `<strong>${o.nombre} ${o.apellido}</strong> — ${o.tipo || ""}`;
 
   const size = document.createElement("div");
   size.className = "small";
-  size.innerHTML = `<strong>Tamaño:</strong> ${o.size} — $${(o.total).toFixed(2)}`;
-
-  const salsas = document.createElement("div");
-  salsas.className = "list";
-  salsas.innerHTML = `<strong>Salsas:</strong><br>${o.salsas.join("<br>")}`;
+  size.innerHTML = `<strong>Tamaño:</strong> ${o.size || ""}`;
 
   const toppings = document.createElement("div");
   toppings.className = "list";
-  toppings.innerHTML = `<strong>Toppings:</strong><br>${o.toppings.join("<br>")}`;
+  toppings.innerHTML = `<strong>Toppings:</strong><br>${(o.toppings||[]).join("<br>")}`;
+
+  const sauces = document.createElement("div");
+  sauces.className = "list";
+  sauces.innerHTML = `<strong>Salsas:</strong><br>${(o.sauces||[]).join("<br>")}`;
 
   const status = document.createElement("div");
   status.className = "small";
   status.innerHTML = `<strong>Estado:</strong> ${o.status || "Pendiente"}`;
 
-  // Botones
   const actions = document.createElement("div");
   actions.className = "actions";
 
-  const btnPrep = document.createElement("button");
-  btnPrep.className = "btn pending";
-  btnPrep.textContent = "Preparando";
-  btnPrep.onclick = () => update(ref(db, "pedidos/" + key), { status: "Preparando" });
+  const btnPend = document.createElement("button");
+  btnPend.className = "btn pending";
+  btnPend.innerText = "Preparando";
+  btnPend.onclick = ()=> update(ref(db, "orders/" + key), { status: "Preparando" });
 
   const btnListo = document.createElement("button");
   btnListo.className = "btn prep";
-  btnListo.textContent = "Listo";
-  btnListo.onclick = () => update(ref(db, "pedidos/" + key), { status: "Listo" });
+  btnListo.innerText = "Listo";
+  btnListo.onclick = ()=> update(ref(db, "orders/" + key), { status: "Listo" });
 
-  const btnEntrega = document.createElement("button");
-  btnEntrega.className = "btn ready";
-  btnEntrega.textContent = "Entregado";
-  btnEntrega.onclick = () => update(ref(db, "pedidos/" + key), { status: "Entregado" });
+  const btnEntreg = document.createElement("button");
+  btnEntreg.className = "btn ready";
+  btnEntreg.innerText = "Entregado";
+  btnEntreg.onclick = ()=> update(ref(db, "orders/" + key), { status: "Entregado" });
 
-  actions.appendChild(btnPrep);
-  actions.appendChild(btnListo);
-  actions.appendChild(btnEntrega);
+  actions.append(btnPend, btnListo, btnEntreg);
 
-  // BORDER SEGÚN ESTADO
-  if(o.status === "Preparando") card.style.borderLeft = "6px solid #7bc8ff";
-  else if(o.status === "Listo") card.style.borderLeft = "6px solid #7ee88b";
-  else if(o.status === "Entregado") {
-    card.style.borderLeft = "6px solid #d9d9d9";
+  // Añadir al card
+  card.append(header, size, toppings, sauces, status, actions);
+
+  // Colores del estado
+  if(o.status === "Pendiente"){
+    card.style.borderLeft = "6px solid #ffcf33";
+  } else if(o.status === "Preparando"){
+    card.style.borderLeft = "6px solid #7bc8ff";
+  } else if(o.status === "Listo"){
+    card.style.borderLeft = "6px solid #7ee88b";
+  } else if(o.status === "Entregado"){
     card.style.opacity = "0.6";
-  } else card.style.borderLeft = "6px solid #ffcf33";
-
-  card.appendChild(header);
-  card.appendChild(cliente);
-  card.appendChild(size);
-  card.appendChild(salsas);
-  card.appendChild(toppings);
-  card.appendChild(status);
-  card.appendChild(actions);
+    card.style.borderLeft = "6px solid #d9d9d9";
+  }
 
   return card;
 }
 
-
-// ------------------------------------------------
-// Escuchar pedidos en tiempo real
-// ------------------------------------------------
-onValue(ref(db, "pedidos"), snapshot => {
+onValue(ref(db, "orders"), snapshot => {
   ordersEl.innerHTML = "";
   const data = snapshot.val();
   if(!data) return;
 
   const entries = Object.entries(data).reverse();
-  entries.forEach(([key, pedido]) => {
-    ordersEl.appendChild(createCard(key, pedido));
+
+  entries.forEach(([key, o]) => {
+    const card = createCard(key, o);
+    ordersEl.appendChild(card);
   });
 });
